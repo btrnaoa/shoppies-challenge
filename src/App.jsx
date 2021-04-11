@@ -1,18 +1,26 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import MovieList from './components/MovieList';
 
-const results = [
-  { id: 1, title: 'The Avengers', year: 2012 },
-  { id: 2, title: 'Avengers: Infinity War', year: 2018 },
-  { id: 3, title: 'Avengers: Endgame', year: 2019 },
-];
-
-const initialNominees = [
-  { id: 2, title: 'Avengers: Infinity War', year: 2018 },
-];
-
 const App = () => {
-  const [nominees, setNominees] = useState(initialNominees);
+  const [nominees, setNominees] = useState([]);
+
+  const [results, setResults] = useState([]);
+  useEffect(() => {
+    fetch(
+      `http://www.omdbapi.com/?apikey=${process.env.REACT_APP_API_KEY}&s=avengers`,
+    )
+      .then((res) => res.json())
+      .then((data) =>
+        setResults(
+          data.Search.map(({ imdbID, Title, Year }) => ({
+            id: imdbID,
+            title: Title,
+            year: Year,
+          })),
+        ),
+      );
+  }, []);
+
   return (
     <>
       <h1>The Shoppies</h1>
