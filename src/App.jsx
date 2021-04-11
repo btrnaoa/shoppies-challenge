@@ -7,27 +7,28 @@ const App = () => {
   const [searchTerms, setSearchTerms] = useState('');
 
   const [results, setResults] = useState([]);
-  useEffect(
-    () =>
-      fetch(
-        `http://www.omdbapi.com/?apikey=${process.env.REACT_APP_API_KEY}&s=${searchTerms}`,
-      )
-        .then((res) => res.json())
-        .then((data) => {
-          if (!data.Search) {
-            setResults([]);
-            return;
-          }
-          setResults(
-            data.Search.map(({ imdbID, Title, Year }) => ({
-              id: imdbID,
-              title: Title,
-              year: Year,
-            })),
-          );
-        }),
-    [searchTerms],
-  );
+  useEffect(() => {
+    if (searchTerms === '') {
+      return;
+    }
+    fetch(
+      `http://www.omdbapi.com/?apikey=${process.env.REACT_APP_API_KEY}&s=${searchTerms}`,
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        if (!data.Search) {
+          setResults([]);
+          return;
+        }
+        setResults(
+          data.Search.map(({ imdbID, Title, Year }) => ({
+            id: imdbID,
+            title: Title,
+            year: Year,
+          })),
+        );
+      });
+  }, [searchTerms]);
 
   return (
     <>
